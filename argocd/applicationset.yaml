@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-app
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions:
+    - missingkey=error
+  generators:
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - env: cit
+                  cluster: https://kubernetes.default.svc
+                - env: qat
+                  cluster: https://kubernetes.default.svc
+                - env: prd
+                  cluster: https://kubernetes.default.svc
+          - list:
+              elements:
+                - region: ap-southeast-1
+                - region: us-east-1
+  template:
+    metadata:
+      name: "my-app-{{.env}}-{{.region}}"
+      namespace: argocd
+      annotations:
+        kargo.akuity.io/authorized-stage: "my-app:{{.env}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/YOUR_ORG/project-repo.git
+        targetRevision: main
+        path: kustomize/overlays/{{.env}}/{{.region}}
+      destination:
+        server: "{{.cluster}}"
+        namespace: "my-app-{{.env}}-{{.region}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
