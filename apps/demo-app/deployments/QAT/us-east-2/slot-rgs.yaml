@@ -8,7 +8,7 @@ spec:
     app: my-app
   ports:
     - port: 80
-      targetPort: 3000
+      targetPort: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -26,11 +26,9 @@ spec:
     spec:
       containers:
         - name: app
-          image: mendhak/http-https-echo:latest
-          command:
-            - ./api-server
+          image: ghcr.io/ikigai-weichen-l/project-repo:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
           envFrom:
             - configMapRef:
                 name: my-app-config
@@ -38,14 +36,14 @@ spec:
                 name: my-app-secret
           livenessProbe:
             httpGet:
-              path: /ping
-              port: 3000
+              path: /
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /ping
-              port: 3000
+              path: /
+              port: 8080
             initialDelaySeconds: 2
             periodSeconds: 5
           resources:

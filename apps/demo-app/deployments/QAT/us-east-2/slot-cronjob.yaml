@@ -15,9 +15,14 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: app
-              image: mendhak/http-https-echo:latest
-              command:
-                - ./cronjob-runner
+              image: ghcr.io/ikigai-weichen-l/project-repo:latest
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  echo "CronJob 啟動，開始模擬任務..."
+                  sleep 10 # 模擬任務執行中
+                  echo "任務完成，準備退出。"
+                  exit 0
               envFrom:
                 - configMapRef:
                     name: my-app-config
