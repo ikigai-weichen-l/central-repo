@@ -14,12 +14,16 @@ spec:
     spec:
       containers:
         - name: app
-          image: ealen/echo-server:latest
+          image: mendhak/http-https-echo:latest
+          command:
+            - ./worker-process
           ports:
             - containerPort: 3000
           envFrom:
             - configMapRef:
                 name: my-app-config
+            - secretRef:
+                name: my-app-secret
           livenessProbe:
             httpGet:
               path: /ping

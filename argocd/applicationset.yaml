@@ -1,42 +1,40 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: my-app
+  name: demo-app-set
   namespace: argocd
 spec:
   goTemplate: true
-  goTemplateOptions:
-    - missingkey=error
   generators:
-    - matrix:
-        generators:
-          - list:
-              elements:
-                - env: cit
-                  cluster: https://kubernetes.default.svc
-                - env: qat
-                  cluster: https://kubernetes.default.svc
-                - env: prd
-                  cluster: https://kubernetes.default.svc
-          - list:
-              elements:
-                - region: ap-southeast-1
-                - region: us-east-1
+    - git:
+        repoURL: https://github.com/ikigai-weichen-l/central-repo.git
+        revision: main
+        files:
+          - path: "apps/*/deployments/*/*/*.yaml"
+
   template:
     metadata:
-      name: "my-app-{{.env}}-{{.region}}"
+      name: "{{index .path.segments 1}}-{{lower (index .path.segments 3)}}-{{index .path.segments 4}}-{{.path.basenameWithoutExt}}"
       namespace: argocd
-      annotations:
-        kargo.akuity.io/authorized-stage: "my-app:{{.env}}"
     spec:
       project: default
-      source:
-        repoURL: https://github.com/YOUR_ORG/project-repo.git
-        targetRevision: main
-        path: kustomize/overlays/{{.env}}/{{.region}}
+      sources:
+        - repoURL: https://github.com/ikigai-weichen-l/central-repo.git
+          targetRevision: main
+          path: apps/{{index .path.segments 1}}/deployments/{{index .path.segments 3}}/{{index .path.segments 4}}
+          directory:
+            include: "{{.path.basenameWithoutExt}}.yaml"
+
+        - repoURL: https://github.com/ikigai-weichen-l/project-repo.git
+          targetRevision: main
+          path: kustomize/overlays/{{index .path.segments 3}}/{{index .path.segments 4}}
+          directory:
+            include: "{{.path.basenameWithoutExt}}.yaml"
+
       destination:
-        server: "{{.cluster}}"
-        namespace: "my-app-{{.env}}-{{.region}}"
+        server: https://kubernetes.default.svc
+        namespace: "{{index .path.segments 1}}-{{lower (index .path.segments 3)}}-{{index .path.segments 4}}-{{.path.basenameWithoutExt}}"
+
       syncPolicy:
         automated:
           prune: true

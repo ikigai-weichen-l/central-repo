@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: my-app-cronjob
+spec:
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: my-app
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: app
+              image: mendhak/http-https-echo:latest
+              command:
+                - ./cronjob-runner
+              envFrom:
+                - configMapRef:
+                    name: my-app-config
+                - secretRef:
+                    name: my-app-secret
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
