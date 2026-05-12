@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: ghcr.io/ikigai-weichen-l/project-repo:latest
+          image: ghcr.io/ikigai-weichen-l/project-repo:f14a52dd55aa768bce204d4d04803f55256954a7
           ports:
             - containerPort: 8080
           envFrom:
