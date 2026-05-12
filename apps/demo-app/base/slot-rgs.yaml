@@ -31,9 +31,13 @@ spec:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: my-app-config
+                name: my-app-shared-config
+            - configMapRef:
+                name: my-app-slot-rgs-config
             - secretRef:
-                name: my-app-secret
+                name: my-app-shared-secret
+            - secretRef:
+                name: my-app-slot-rgs-secret
           livenessProbe:
             httpGet:
               path: /
