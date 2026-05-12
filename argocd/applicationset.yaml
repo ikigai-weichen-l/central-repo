@@ -13,31 +13,24 @@ spec:
           - path: "apps/*/deployments/*/*/*.yaml"
   template:
     metadata:
-      # 使用 filenameWithoutExtension 取得檔名 (如 api, worker)
-      name: "{{ index .path.segments 1 }}-{{ lower (index .path.segments 3) }}-{{ index .path.segments 4 }}-{{ .path.basenameWithoutExt }}"
+      name: '{{ index .path.segments 1 }}-{{ lower (index .path.segments 3) }}-{{ index .path.segments 4 }}-{{ trimSuffix ".yaml" .path.filename }}'
       namespace: argocd
     spec:
       project: default
       sources:
-        # 第一個 Source: 中央倉庫的基礎 YAML
         - repoURL: https://github.com/ikigai-weichen-l/central-repo.git
           targetRevision: main
-          path: "{{ .path.directory }}"
+          path: "{{ dir .path.path }}"
           directory:
             include: "{{ .path.filename }}"
 
-        # 第二個 Source: 專案倉庫的 Kustomize Overlay
         - repoURL: https://github.com/ikigai-weichen-l/project-repo.git
           targetRevision: main
-          path: "kustomize/overlays/{{ index .path.segments 3 }}/{{ index .path.segments 4 }}"
-          directory:
-            # 這裡也會自動對應同名的 yaml 檔
-            include: "{{ .path.filename }}"
+          path: 'kustomize/overlays/{{ index .path.segments 3 }}/{{ index .path.segments 4 }}/{{ trimSuffix ".yaml" .path.filename }}'
 
       destination:
         server: https://kubernetes.default.svc
-        # 保持 Namespace 與 App 名稱一致或自定義
-        namespace: "{{ index .path.segments 1 }}-{{ lower (index .path.segments 3) }}-{{ index .path.segments 4 }}-{{ .path.basenameWithoutExt }}"
+        namespace: '{{ index .path.segments 1 }}-{{ lower (index .path.segments 3) }}-{{ index .path.segments 4 }}-{{ trimSuffix ".yaml" .path.filename }}'
 
       syncPolicy:
         automated:
