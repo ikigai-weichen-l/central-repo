@@ -20,7 +20,7 @@ spec:
       sources:
         - repoURL: https://github.com/ikigai-weichen-l/central-repo.git
           targetRevision: main
-          path: "{{ dir .path.path }}"
+          path: "{{ .path.path }}"
           directory:
             include: "{{ .path.filename }}"
 
