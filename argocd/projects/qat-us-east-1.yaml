@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: qat-us-east-1
+  namespace: argocd
+spec:
+  description: QAT environment in us-east-1
+  sourceRepos:
+    - https://github.com/ikigai-weichen-l/central-repo.git
+    - https://github.com/ikigai-weichen-l/project-repo.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: '*-qat-us-east-1'
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace

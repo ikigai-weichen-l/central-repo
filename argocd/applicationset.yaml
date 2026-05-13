@@ -16,7 +16,7 @@ spec:
       name: '{{ index .path.segments 1 }}-{{ lower (index .path.segments 3) }}-{{ index .path.segments 4 }}-{{ trimSuffix ".yaml" .path.filename }}'
       namespace: argocd
     spec:
-      project: default
+      project: '{{ lower (index .path.segments 3) }}-{{ index .path.segments 4 }}'
       sources:
         - repoURL: https://github.com/ikigai-weichen-l/central-repo.git
           targetRevision: main
