@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slot-bridge
+  namespace: slot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slot-bridge
+  template:
+    metadata:
+      labels:
+        app: slot-bridge
+    spec:
+      containers:
+        - name: slot-bridge
+          image: ghcr.io/ikigai-weichen-l/project-repo:f14a52dd55aa768bce204d4d04803f55256954a7
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: slot-bridge
+  namespace: slot
+spec:
+  selector:
+    app: slot-bridge
+  ports:
+    - port: 80
+      targetPort: 8080
