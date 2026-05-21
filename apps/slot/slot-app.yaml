@@ -5,16 +5,10 @@ metadata:
   namespace: argocd
 spec:
   project: slot
-  sources:
-    - repoURL: https://github.com/ikigai-weichen-l/central-repo.git
-      targetRevision: main
-      path: apps/slot/base
-      kustomize: {}
-
-    - repoURL: https://github.com/ikigai-weichen-l/project-repo.git
-      targetRevision: main
-      path: kustomize/overlays/slot/slot-app
-      kustomize: {}
+  source:
+    repoURL: https://github.com/ikigai-weichen-l/central-repo.git
+    targetRevision: main
+    path: apps/slot/base
   destination:
     server: https://kubernetes.default.svc
     namespace: slot # ← 部署到 slot namespace
