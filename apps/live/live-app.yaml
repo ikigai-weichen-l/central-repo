@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: live-app
+  namespace: argocd
+spec:
+  project: live
+  source:
+    repoURL: https://github.com/ikigai-weichen-l/central-repo.git
+    targetRevision: main
+    path: apps/live/base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: live # ← 部署到 live namespace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: live
+  namespace: argocd
+spec:
+  sourceRepos:
+    - https://github.com/ikigai-weichen-l/central-repo.git
+    - https://github.com/ikigai-weichen-l/project-repo.git
+  destinations:
+    - namespace: live
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
