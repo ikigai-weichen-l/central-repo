@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: live-app
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: live
   source:
@@ -11,7 +13,7 @@ spec:
     path: apps/live/base
   destination:
     server: https://kubernetes.default.svc
-    namespace: live # ← 部署到 live namespace
+    namespace: live # deployment target
   syncPolicy:
     automated:
       prune: true
